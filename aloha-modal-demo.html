@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+	<title>Aloha Editor &bull; Modal Demo</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet"
+	      type="text/css"
+	      href="http://alohaeditor.org/builds/hotfix/latest/alohaeditor-0.23.5-SNAPSHOT/aloha/css/aloha.css">
+	<script
+	    data-aloha-plugins="common/ui,common/format"
+		src="http://alohaeditor.org/builds/hotfix/latest/alohaeditor-0.23.5-SNAPSHOT/aloha/lib/aloha-full.min.js"></script>
+</head>
+<body>
+	<pre></pre>
+	<script>
+		/* ****************  Threadbare example for Dialog.modal() **************** */
+		Aloha.ready(function () {
+			Aloha.require([
+				'aloha/jquery',
+				'ui/dialog'
+			], function example($, Dialog) {
+				'use strict';
+
+				$('pre').html($('body').find('>script:first').contents());
+
+				var $window = $(window);
+
+				/**
+				 * Create and show a modal dialog that loads an iframe.
+				 *
+				 * @see: http://docs.jquery.com/UI/Dialog
+				 * The Aloha UI Dialog is backed by the jQueryUI Dialog API, and so all
+				 * configuration that it supports can be used.
+				 *
+				 * @usage:
+				 * var close = dialog('www.example.com/form'); // Create dialog
+				 * // ...
+				 * close(); // Destroy dialog
+				 *
+				 * @return {function} A function that will destroy the dialog instance, and
+				 *                    remove its corresponding element from the DOM.
+				 */
+				function dialog(url) {
+					var $dialog = Dialog.modal({
+						html          : '<div class="preloader">Loading: ' + url + ' ...</div>' +
+						                '<iframe width="98%" height="98%" frameborder="0" src="' + url + '"></iframe>',
+						width         : $window.width() * 0.9,
+						height        : $window.height() * 0.9,
+						cls           : 'myDialog',
+						closeOnEscape : false,
+						show          : {
+							effect   : 'scale',
+							easing   : 'easeOutCubic',
+							duration : 500
+						}
+					});
+
+					// Show the preloader until the iframe is loaded.
+					$dialog.css('text-align', 'center').find('iframe').hide().on('load', function () {
+						$dialog.find('.preloader').hide();
+						$(this).show();
+					});
+
+					return function () {
+						$dialog.dialog('destroy').remove();
+					};
+				}
+
+				// Open a dialog for 16 seconds
+				setTimeout(dialog('http://www.youtube.com/embed/m7BL_VxVuf8?autoplay=1'), 16 * 1000);
+			});
+		});
+	</script>
+</body>
+</html>
